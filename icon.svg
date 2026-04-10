@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="#0d3d1f"/>
+  <!-- Gold border ring -->
+  <rect x="20" y="20" width="472" height="472" rx="66" fill="none" stroke="#c8a84b" stroke-width="8"/>
+  <!-- Card shape -->
+  <rect x="100" y="80" width="312" height="352" rx="28" fill="#fefefe"/>
+  <!-- Spade top (diamond part) -->
+  <path d="M256 140 L306 220 C316 238 300 258 278 252 C290 268 286 290 256 290 C226 290 222 268 234 252 C212 258 196 238 206 220 Z" fill="#1a1a1a"/>
+  <!-- Spade stem -->
+  <rect x="244" y="280" width="24" height="40" rx="4" fill="#1a1a1a"/>
+  <!-- Spade foot -->
+  <rect x="228" y="316" width="56" height="14" rx="7" fill="#1a1a1a"/>
+  <!-- Corner rank top-left -->
+  <text x="120" y="152" font-family="Georgia,serif" font-size="52" font-weight="bold" fill="#1a1a1a">A</text>
+  <text x="128" y="192" font-family="Georgia,serif" font-size="32" fill="#1a1a1a">♠</text>
+  <!-- Corner rank bottom-right (rotated) -->
+  <text x="392" y="368" font-family="Georgia,serif" font-size="52" font-weight="bold" fill="#1a1a1a" transform="rotate(180,392,368)">A</text>
+  <text x="384" y="336" font-family="Georgia,serif" font-size="32" fill="#1a1a1a" transform="rotate(180,384,336)">♠</text>
+</svg>
