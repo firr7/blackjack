@@ -2,8 +2,19 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Blackjack Royale</title>
+
+<!-- PWA / Mobile App -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d3d1f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Blackjack">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -439,6 +450,15 @@
     border: 1px solid rgba(255,255,255,0.1);
   }
 
+  /* All In button */
+  .btn-allin {
+    background: linear-gradient(135deg, #4a0070, #7b1fa2);
+    color: #e1bee7;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    border: 1px solid rgba(225,190,231,0.25);
+  }
+  .btn-allin:not(:disabled):hover { box-shadow: 0 6px 20px rgba(123,31,162,0.5); }
+
   /* Message */
   .message {
     font-size: 12px;
@@ -470,10 +490,15 @@
       display: flex;
       flex-direction: column;
       min-height: 100dvh;
+      /* Safe area support for notched phones */
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
     }
 
     .header {
       padding: 14px 0 6px;
+      /* Account for status bar on full-screen PWA */
+      padding-top: calc(14px + env(safe-area-inset-top));
       flex-shrink: 0;
     }
     .header h1 { font-size: 26px; letter-spacing: 0.1em; }
@@ -531,6 +556,7 @@
     /* Bottom panel sticks to bottom */
     .bottom-panel {
       padding: 10px 10px 14px;
+      padding-bottom: calc(14px + env(safe-area-inset-bottom));
       gap: 10px;
       flex-shrink: 0;
     }
@@ -570,8 +596,9 @@
     }
     /* Deal / Nuova Mano spans full width */
     #btn-deal  { grid-column: 1 / -1; font-size: 15px; padding: 15px; }
-    /* Clear button small, top-right */
-    #btn-clear { grid-column: 1 / -1; font-size: 11px; padding: 8px; min-height: 36px; }
+    /* Clear and All In side by side */
+    #btn-clear { font-size: 11px; padding: 8px; min-height: 36px; }
+    #btn-allin { font-size: 11px; padding: 8px; min-height: 36px; }
 
     .message { font-size: 10px; letter-spacing: 0.15em; height: 14px; }
 
@@ -584,6 +611,7 @@
     .card-corner .rank { font-size: 11px; }
     .chip { width: 44px; height: 44px; font-size: 11px; }
     .header h1 { font-size: 22px; }
+    #btn-clear, #btn-allin { font-size: 10px; padding: 6px; min-height: 32px; }
   }
 
   /* Win coins animation */
@@ -654,6 +682,7 @@
 
     <div class="action-buttons" id="action-buttons">
       <button class="btn btn-clear" id="btn-clear" onclick="clearBet()">Azzera</button>
+      <button class="btn btn-allin" id="btn-allin" onclick="allIn()">All In</button>
       <button class="btn btn-deal"  id="btn-deal"  onclick="deal()">Deal</button>
       <button class="btn btn-hit"   id="btn-hit"   onclick="hit()"    disabled>Hit</button>
       <button class="btn btn-stand" id="btn-stand" onclick="stand()"  disabled>Stand</button>
@@ -792,6 +821,13 @@ function clearBet() {
   currentBet = 0;
   updateUI();
   setMessage('Piazza la tua puntata per iniziare');
+}
+
+function allIn() {
+  if (gameState !== 'betting') return;
+  currentBet = balance;
+  updateUI();
+  setMessage('');
 }
 
 // ─── DEAL ────────────────────────────────────────────────────────────────────
@@ -974,6 +1010,7 @@ function updateUI() {
 
   // Buttons
   document.getElementById('btn-clear').disabled  = !betting || currentBet === 0;
+  document.getElementById('btn-allin').disabled  = !betting || balance === 0;
   document.getElementById('btn-deal').disabled   = !(betting && currentBet > 0) && !done;
   document.getElementById('btn-hit').disabled    = !playing;
   document.getElementById('btn-stand').disabled  = !playing;
@@ -1024,6 +1061,13 @@ function newGame() {
 // ─── INIT ────────────────────────────────────────────────────────────────────
 buildDeck();
 updateUI();
+
+// Register Service Worker for PWA / offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
 </html>
